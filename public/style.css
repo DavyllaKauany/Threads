@@ -1,0 +1,198 @@
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --fundo: #ffffff;
+  --texto: #101010;
+  --suave: #777777;
+  --linha: #e6e6e6;
+  --cinza: #f3f3f3;
+  --destaque: #101010;
+  --curtir: #ff3040;
+}
+
+body {
+  font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background: var(--fundo);
+  color: var(--texto);
+  line-height: 1.4;
+}
+
+a { color: inherit; text-decoration: none; }
+button { font: inherit; cursor: pointer; }
+
+/* ===== layout ===== */
+.layout { display: flex; min-height: 100vh; max-width: 1000px; margin: 0 auto; }
+
+#menu {
+  width: 240px;
+  padding: 20px 12px;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  border-right: 1px solid var(--linha);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+#menu .logo { font-size: 30px; font-weight: 800; padding: 4px 14px 14px; }
+#menu a, #menu button.sair {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  text-align: left;
+  padding: 10px 14px;
+  border: 0;
+  background: none;
+  border-radius: 10px;
+  font-size: 15px;
+  color: var(--suave);
+}
+#menu a:hover, #menu button.sair:hover { background: var(--cinza); }
+#menu a.ativo { color: var(--texto); font-weight: 700; background: var(--cinza); }
+.icone { font-size: 22px; line-height: 1; vertical-align: middle; }
+#menu .separador { height: 1px; background: var(--linha); margin: 8px 6px; }
+#menu .quem { margin-top: auto; padding: 12px 14px 0; font-size: 13px; color: var(--suave); }
+
+main { flex: 1; min-width: 0; max-width: 640px; padding: 0 0 60px; }
+main h1 { font-size: 18px; padding: 18px 20px; border-bottom: 1px solid var(--linha); }
+
+.vazio { text-align: center; color: var(--suave); padding: 40px 20px; }
+.erro { color: #c0172b; font-size: 14px; padding: 8px 20px; }
+
+/* ===== caixa de postar ===== */
+.compor { padding: 16px 20px; border-bottom: 1px solid var(--linha); }
+.compor textarea {
+  width: 100%;
+  border: 0;
+  outline: none;
+  resize: none;
+  font: inherit;
+  font-size: 15px;
+  min-height: 60px;
+  background: transparent;
+}
+.compor .rodape { display: flex; align-items: center; gap: 12px; margin-top: 8px; font-size: 13px; color: var(--suave); }
+.compor .rodape .espaco { flex: 1; }
+.compor .contador.estourou { color: var(--curtir); font-weight: 700; }
+
+.botao {
+  background: var(--destaque);
+  color: #fff;
+  border: 0;
+  border-radius: 20px;
+  padding: 8px 18px;
+  font-weight: 600;
+  font-size: 14px;
+}
+.botao:disabled { opacity: 0.35; cursor: default; }
+.botao.claro { background: var(--cinza); color: var(--texto); }
+
+/* ===== posts ===== */
+.post { display: flex; gap: 12px; padding: 16px 20px; border-bottom: 1px solid var(--linha); }
+.avatar {
+  flex: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #d9d9d9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  color: #444;
+  text-transform: uppercase;
+}
+.post .corpo { flex: 1; min-width: 0; }
+.post .topo { display: flex; align-items: center; gap: 8px; font-size: 14px; }
+.post .topo .nome { font-weight: 700; }
+.post .topo .nome:hover { text-decoration: underline; }
+.post .tempo { color: var(--suave); }
+.selo { background: var(--cinza); color: var(--suave); border-radius: 8px; padding: 1px 8px; font-size: 12px; }
+.post .texto { margin: 4px 0 8px; font-size: 15px; white-space: pre-wrap; word-wrap: break-word; }
+.post .acoes { display: flex; gap: 4px; flex-wrap: wrap; }
+.post .acoes button {
+  border: 0;
+  background: none;
+  padding: 6px 10px;
+  border-radius: 16px;
+  font-size: 14px;
+  color: var(--suave);
+}
+.post .acoes button:hover { background: var(--cinza); }
+.post .acoes button.ativo { color: var(--curtir); font-weight: 700; }
+.post .acoes button.ativo.salvo { color: var(--texto); }
+.post .acoes button .icone { font-size: 20px; }
+
+.comentarios { margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--linha); }
+.comentario { font-size: 14px; padding: 6px 0; }
+.comentario b { margin-right: 6px; }
+.comentario .tempo { font-size: 12px; margin-left: 6px; }
+.comentarios form { display: flex; gap: 8px; margin-top: 8px; }
+.comentarios input { flex: 1; border: 1px solid var(--linha); border-radius: 18px; padding: 8px 14px; font: inherit; font-size: 14px; outline: none; }
+
+/* ===== listas (pesquisa, atividade, mensagens) ===== */
+.item { display: flex; align-items: center; gap: 12px; padding: 14px 20px; border-bottom: 1px solid var(--linha); cursor: pointer; }
+.item:hover { background: #fafafa; }
+.item .info { flex: 1; min-width: 0; }
+.item .info b { display: block; font-size: 14px; }
+.item .info span { display: block; font-size: 14px; color: var(--suave); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.busca { padding: 14px 20px; border-bottom: 1px solid var(--linha); }
+.busca input { width: 100%; border: 0; background: var(--cinza); border-radius: 12px; padding: 12px 16px; font: inherit; outline: none; }
+.subtitulo { font-size: 13px; color: var(--suave); font-weight: 600; padding: 14px 20px 6px; }
+
+/* ===== chat ===== */
+.chat-topo { display: flex; align-items: center; gap: 12px; padding: 14px 20px; border-bottom: 1px solid var(--linha); font-weight: 700; }
+.chat-topo button { border: 0; background: var(--cinza); border-radius: 16px; padding: 6px 12px; }
+.chat-lista { padding: 16px 20px; display: flex; flex-direction: column; gap: 8px; min-height: 320px; }
+.bolha { max-width: 75%; padding: 9px 14px; border-radius: 18px; background: var(--cinza); font-size: 14px; word-wrap: break-word; }
+.bolha.minha { align-self: flex-end; background: var(--destaque); color: #fff; }
+.chat-form { display: flex; gap: 8px; padding: 12px 20px; border-top: 1px solid var(--linha); }
+.chat-form input { flex: 1; border: 1px solid var(--linha); border-radius: 20px; padding: 10px 16px; font: inherit; outline: none; }
+
+/* ===== perfil e insights ===== */
+.perfil-topo { padding: 24px 20px; border-bottom: 1px solid var(--linha); display: flex; gap: 16px; align-items: flex-start; }
+.perfil-topo .avatar { width: 72px; height: 72px; font-size: 28px; }
+.perfil-topo .dados { flex: 1; }
+.perfil-topo h2 { font-size: 22px; }
+.perfil-topo .arroba { color: var(--suave); font-size: 14px; }
+.perfil-topo .bio { margin: 10px 0; }
+.perfil-topo .numeros { color: var(--suave); font-size: 14px; display: flex; gap: 16px; margin-bottom: 12px; }
+.perfil-topo .numeros b { color: var(--texto); }
+
+.cartoes { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 20px; }
+.cartao { background: var(--cinza); border-radius: 14px; padding: 18px; }
+.cartao b { display: block; font-size: 28px; }
+.cartao span { color: var(--suave); font-size: 14px; }
+
+/* ===== login ===== */
+.login-pagina { display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; background: var(--cinza); }
+.login-caixa { background: #fff; width: 100%; max-width: 380px; border-radius: 20px; padding: 32px 28px; box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06); }
+.login-caixa .logo { font-size: 44px; font-weight: 800; text-align: center; }
+.login-caixa p.sub { text-align: center; color: var(--suave); margin: 4px 0 20px; font-size: 14px; }
+.login-caixa input { width: 100%; border: 1px solid var(--linha); background: var(--cinza); border-radius: 12px; padding: 12px 14px; margin-bottom: 10px; font: inherit; outline: none; }
+.login-caixa .botao { width: 100%; padding: 12px; border-radius: 12px; }
+.login-caixa .trocar { text-align: center; margin-top: 16px; font-size: 14px; color: var(--suave); }
+.login-caixa .trocar a { color: var(--texto); font-weight: 700; cursor: pointer; }
+.login-caixa .dica { margin-top: 14px; font-size: 12px; color: var(--suave); text-align: center; }
+
+/* ===== celular ===== */
+@media (max-width: 760px) {
+  .layout { flex-direction: column; }
+  #menu {
+    width: 100%;
+    height: auto;
+    position: static;
+    flex-direction: row;
+    flex-wrap: wrap;
+    border-right: 0;
+    border-bottom: 1px solid var(--linha);
+    padding: 8px;
+  }
+  #menu .logo, #menu .separador, #menu .quem { display: none; }
+  #menu a, #menu button.sair { width: auto; gap: 6px; padding: 8px 10px; font-size: 13px; }
+  #menu .icone { font-size: 20px; }
+  main { max-width: none; }
+}

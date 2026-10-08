@@ -1,0 +1,37 @@
+# Dependencias: ignora os pacotes instalados pelo npm.
+# Eles podem ser recriados com npm install usando package.json e package-lock.json.
+node_modules/
+
+# Variaveis de ambiente: evita enviar configuracoes locais e segredos ao Git.
+# .env ignora o arquivo principal; .env.* ignora variantes como .env.local.
+# A excecao mantem o modelo de configuracao seguro disponivel no repositorio.
+.env
+.env.*
+!.env.example
+
+# Bancos SQLite locais: ignora bancos de desenvolvimento e arquivos auxiliares.
+# Os padroes com *- cobrem arquivos como -wal e -shm gerados pelo SQLite.
+*.db
+*.sqlite
+*.sqlite3
+*.sqlite-*
+*.sqlite3-*
+
+# Logs: ignora pastas e arquivos de registro produzidos pela aplicacao e ferramentas.
+# Os padroes npm/yarn/pnpm cobrem especificamente os logs dos gerenciadores de pacotes.
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# Sistema operacional: ignora arquivos auxiliares comuns do macOS e Windows.
+.DS_Store
+Thumbs.db
+
+# Editor: ignora configuracoes locais do VS Code e do IntelliJ.
+# As excecoes permitem compartilhar recomendacoes de extensoes e configuracoes do projeto.
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea/

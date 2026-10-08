@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Threads • Entrar</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="login-pagina">
+  <div class="login-caixa">
+    <div class="logo">@</div>
+    <p class="sub" id="subtitulo">Entre para ver os threads</p>
+
+    <form id="form">
+      <input id="nome" placeholder="Seu nome" autocomplete="name" hidden>
+      <input id="usuario" placeholder="Usuário" autocomplete="username" required>
+      <input id="senha" type="password" placeholder="Senha" autocomplete="current-password" required>
+      <div class="erro" id="erro" style="padding:0 0 10px"></div>
+      <button class="botao" id="botao" type="submit">Entrar</button>
+    </form>
+
+    <div class="trocar" id="trocar">Não tem conta? <a id="link">Cadastre-se</a></div>
+    <div class="dica">Contas de exemplo: ayslla, mariaclara, isaac, myllena ou gizelly (senha 123456)</div>
+  </div>
+
+  <script>
+    let modoCadastro = false;
+    const $ = id => document.getElementById(id);
+
+    // Se já está logado, vai direto para o início
+    fetch("/api/auth/eu").then(r => { if (r.ok) location.href = "/"; });
+
+    function atualizarModo() {
+      $("nome").hidden = !modoCadastro;
+      $("nome").required = modoCadastro;
+      $("botao").textContent = modoCadastro ? "Criar conta" : "Entrar";
+      $("subtitulo").textContent = modoCadastro ? "Crie sua conta" : "Entre para ver os threads";
+      $("trocar").innerHTML = modoCadastro
+        ? 'Já tem conta? <a id="link">Entrar</a>'
+        : 'Não tem conta? <a id="link">Cadastre-se</a>';
+      $("link").onclick = alternar;
+      $("erro").textContent = "";
+    }
+    function alternar() { modoCadastro = !modoCadastro; atualizarModo(); }
+    $("link").onclick = alternar;
+
+    $("form").addEventListener("submit", async e => {
+      e.preventDefault();
+      $("erro").textContent = "";
+      const corpo = { usuario: $("usuario").value, senha: $("senha").value };
+      if (modoCadastro) corpo.nome = $("nome").value;
+
+      try {
+        const r = await fetch(modoCadastro ? "/api/auth/registrar" : "/api/auth/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(corpo)
+        });
+        const dados = await r.json();
+        if (!r.ok) { $("erro").textContent = dados.erro || "Erro."; return; }
+        location.href = "/";
+      } catch (err) {
+        $("erro").textContent = "Não consegui falar com o servidor.";
+      }
+    });
+  </script>
+</body>
+</html>
