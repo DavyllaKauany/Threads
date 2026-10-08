@@ -1,5 +1,7 @@
 # Threads (Express + Sequelize + SQLite)
 
+Trabalho para clonar uma rede social, mesclando recursos do Threads e do Instagram.
+
 ## Como rodar
 
 1. Instale o Node.js (versão 18 ou mais nova): https://nodejs.org
