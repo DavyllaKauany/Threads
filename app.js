@@ -4,9 +4,11 @@ const path = require("path");
 const bcrypt = require("bcryptjs");
 const { sequelize, User, Post, Like, Follow, Comment, Message, Activity } = require("./models");
 
+// Cria a aplicação Express e escolhe a porta (a hospedagem pode fornecer PORT).
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Converte requisições JSON e mantém o usuário autenticado em uma sessão.
 app.use(express.json());
 app.use(session({
   secret: "threads-ifrn-segredo",
@@ -21,22 +23,23 @@ function exigirLogin(req, res, next) {
   next();
 }
 
-// Arquivos da pasta public (index: false porque a rota "/" decide para onde ir)
+// Publica HTML, CSS e JavaScript. A página inicial é controlada pela rota abaixo.
 app.use(express.static(path.join(__dirname, "public"), { index: false }));
 
+// Protege a página inicial: visitantes são direcionados à tela de login.
 app.get("/", (req, res) => {
   if (!req.session.userId) return res.redirect("/login.html");
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
-// Rotas da API
+// Cada router agrupa endpoints por funcionalidade; somente auth tem rotas públicas.
 app.use("/api/auth", require("./routes/auth"));
 app.use("/api/usuarios", exigirLogin, require("./routes/usuarios"));
 app.use("/api/posts", exigirLogin, require("./routes/posts"));
 app.use("/api/mensagens", exigirLogin, require("./routes/mensagens"));
 app.use("/api/atividades", exigirLogin, require("./routes/atividades"));
 
-// Dados de exemplo (só na primeira vez que o banco é criado). Senha de todos: 123456
+// Popula um banco novo para facilitar testes manuais. Não altera bancos já preenchidos.
 async function criarDadosDeExemplo() {
   if ((await User.count()) > 0) return;
 
@@ -69,7 +72,7 @@ async function criarDadosDeExemplo() {
   await Activity.create({ tipo: "seguiu", texto: "começou a seguir você.", deId: gizelly.id, paraId: ayslla.id });
 }
 
-// Cria as tabelas (se não existirem), insere os exemplos e liga o servidor
+// Garante as tabelas, prepara dados iniciais e só então começa a aceitar requisições.
 sequelize.sync()
   .then(criarDadosDeExemplo)
   .then(() => {

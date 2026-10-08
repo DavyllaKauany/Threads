@@ -1,8 +1,10 @@
 // ===== utilidades =====
 let eu = null; // usuário logado
 
+// Atalho para o painel que recebe o conteúdo das telas.
 const conteudo = () => document.getElementById("conteudo");
 
+// Cliente HTTP da API: envia JSON quando necessário, trata erros e redireciona sessões expiradas.
 async function api(url, metodo = "GET", corpo) {
   const resposta = await fetch(url, {
     method: metodo,
@@ -26,6 +28,7 @@ function esc(texto) {
 }
 
 function tempo(iso) {
+  // Mostra datas em formato curto para caber nos cartões e listas.
   const s = (Date.now() - new Date(iso).getTime()) / 1000;
   if (s < 60) return "agora";
   if (s < 3600) return Math.floor(s / 60) + " min";
@@ -34,6 +37,7 @@ function tempo(iso) {
 }
 
 const inicial = nome => esc((nome || "?").trim().charAt(0));
+// Material Symbols renderiza o nome do ícone como glifo; aria-hidden evita leitura duplicada.
 const icone = nome => `<span class="material-symbols-outlined icone" aria-hidden="true">${nome}</span>`;
 
 // ===== menu =====
@@ -52,6 +56,7 @@ const MENU = [
 ];
 
 function montarMenu(ativo) {
+  // Gera a navegação e destaca a seção atual; o botão sair encerra a sessão no servidor.
   const itens = MENU.map(item => {
     if (item === "-") return '<div class="separador"></div>';
     const [id, rotulo, simbolo] = item;
@@ -74,6 +79,7 @@ function montarMenu(ativo) {
 
 // ===== posts =====
 function cartaoPost(p) {
+  // Monta um cartão de post e inclui ações de gerenciamento apenas para seu autor.
   const donoAcoes = p.meu
     ? `<button data-acao="arquivar" title="${p.arquivado ? "Desarquivar" : "Arquivar"}" aria-label="${p.arquivado ? "Desarquivar" : "Arquivar"}">${icone(p.arquivado ? "unarchive" : "archive")}</button>
        <button data-acao="apagar" title="Apagar" aria-label="Apagar">${icone("delete")}</button>`
@@ -101,6 +107,7 @@ function cartaoPost(p) {
 }
 
 async function listaDePosts(params, mensagemVazia) {
+  // Busca posts com os filtros fornecidos e apresenta uma mensagem quando não há resultados.
   const posts = await api("/api/posts?" + new URLSearchParams(params).toString());
   return posts.length
     ? posts.map(cartaoPost).join("")
@@ -108,6 +115,7 @@ async function listaDePosts(params, mensagemVazia) {
 }
 
 async function carregarComentarios(art) {
+  // Carrega comentários de um post e cria o formulário para adicionar outro.
   const caixa = art.querySelector(".comentarios");
   const lista = await api(`/api/posts/${art.dataset.id}/comentarios`);
   caixa.innerHTML =
@@ -129,6 +137,7 @@ document.addEventListener("click", async e => {
   const id = art.dataset.id;
 
   try {
+    // data-acao identifica a operação sem criar um listener separado para cada post.
     switch (botao.dataset.acao) {
       case "curtir": {
         const r = await api(`/api/posts/${id}/curtir`, "POST");
@@ -175,6 +184,7 @@ document.addEventListener("submit", async e => {
   e.preventDefault();
 
   try {
+    // data-form informa qual endpoint usar para cada formulário da interface.
     if (form.dataset.form === "postar") {
       const texto = form.querySelector("textarea").value.trim();
       if (!texto) return;
@@ -216,6 +226,7 @@ document.addEventListener("input", e => {
 
 // ===== telas =====
 async function telaFeed(titulo, filtro, vazio, comCaixa) {
+  // Reaproveita a mesma montagem para o início e para as listas filtradas.
   const caixa = comCaixa ? `
     <form class="compor" data-form="postar">
       <textarea placeholder="Iniciar um thread..." maxlength="600"></textarea>
@@ -236,6 +247,7 @@ async function telaPesquisar() {
     <div class="busca"><input id="campoBusca" placeholder="Buscar pessoas e posts..." autocomplete="off"></div>
     <div id="resultados"><div class="vazio">Digite para buscar.</div></div>`;
 
+  // Aguarda uma pausa na digitação antes de consultar a API (debounce).
   let espera;
   document.getElementById("campoBusca").addEventListener("input", e => {
     clearTimeout(espera);
@@ -248,6 +260,7 @@ async function buscar(q) {
   const caixa = document.getElementById("resultados");
   if (!q) { caixa.innerHTML = '<div class="vazio">Digite para buscar.</div>'; return; }
 
+  // Pesquisas de pessoas e posts são independentes, então rodam em paralelo.
   const [pessoas, posts] = await Promise.all([
     api("/api/usuarios?q=" + encodeURIComponent(q)),
     listaDePosts({ q }, "Nenhum post encontrado.")
@@ -342,6 +355,7 @@ const TELAS = {
 // Lê o # da URL (ex.: #salvos ou #mensagens/isaac) e mostra a tela certa
 async function rotear() {
   const [secao, extra] = (location.hash.slice(1) || "inicio").split("/");
+  // Hash da URL escolhe a tela; hash inválido volta ao início.
   const nome = TELAS[secao] ? secao : "inicio";
   montarMenu(nome);
   try {
@@ -361,6 +375,7 @@ async function telaPerfil() {
     const p = await api(`/api/usuarios/${encodeURIComponent(usuario)}`);
     const posts = await listaDePosts({ autor: usuario }, "Nenhum post ainda.");
 
+    // O perfil próprio permite edição; perfis de outras pessoas permitem seguir e enviar mensagem.
     const botoes = p.souEu
       ? '<button class="botao claro" id="btnEditar">Editar perfil</button>'
       : `<button class="botao ${p.euSigo ? "claro" : ""}" id="btnSeguir">${p.euSigo ? "Seguindo" : "Seguir"}</button>
@@ -408,6 +423,7 @@ async function telaPerfil() {
 
 // ===== começo =====
 (async function iniciar() {
+  // Confirma a sessão antes de carregar qualquer tela protegida.
   try {
     eu = await api("/api/auth/eu");
   } catch (e) {

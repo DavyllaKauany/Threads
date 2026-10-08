@@ -33,6 +33,7 @@
     // Se já está logado, vai direto para o início
     fetch("/api/auth/eu").then(r => { if (r.ok) location.href = "/"; });
 
+    // Alterna o formulário entre entrar e criar conta sem recarregar a página.
     function atualizarModo() {
       $("nome").hidden = !modoCadastro;
       $("nome").required = modoCadastro;
@@ -48,6 +49,7 @@
     $("link").onclick = alternar;
 
     $("form").addEventListener("submit", async e => {
+      // Envia as credenciais à rota correspondente e mostra erros retornados pela API.
       e.preventDefault();
       $("erro").textContent = "";
       const corpo = { usuario: $("usuario").value, senha: $("senha").value };

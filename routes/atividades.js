@@ -1,6 +1,7 @@
 const express = require("express");
 const { User, Post, Like, Follow, Save, Comment, Message, Activity } = require("../models");
 
+// Notificações recentes e resumo numérico das atividades da conta.
 const router = express.Router();
 
 // GET /api/atividades  (notificações de quem está logado)
@@ -23,6 +24,7 @@ router.get("/", async (req, res) => {
 // GET /api/atividades/insights  (contagens feitas com COUNT no banco)
 router.get("/insights", async (req, res) => {
   const meId = req.session.userId;
+  // COUNT no banco calcula cada indicador sem carregar todas as linhas na aplicação.
   const [posts, curtidasRecebidas, comentariosRecebidos, seguidores, seguindo, salvos, mensagens] = await Promise.all([
     Post.count({ where: { UserId: meId } }),
     Like.count({ include: [{ model: Post, where: { UserId: meId }, required: true }] }),

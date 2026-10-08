@@ -8,11 +8,13 @@ const Comment = require("./Comment");
 const Message = require("./Message");
 const Activity = require("./Activity");
 
-// Um usuário tem vários posts
+// Este arquivo reúne os modelos e define como as tabelas se relacionam.
+
+// Um usuário pode publicar vários posts; cada post pertence a um autor.
 User.hasMany(Post, { foreignKey: "UserId" });
 Post.belongsTo(User, { foreignKey: "UserId" });
 
-// Curtidas, salvos e comentários ligam usuário e post
+// Curtidas, itens salvos e comentários conectam pessoas aos posts.
 Post.hasMany(Like, { foreignKey: "PostId" });
 Like.belongsTo(Post, { foreignKey: "PostId" });
 Like.belongsTo(User, { foreignKey: "UserId" });
@@ -24,11 +26,11 @@ Post.hasMany(Comment, { foreignKey: "PostId" });
 Comment.belongsTo(Post, { foreignKey: "PostId" });
 Comment.belongsTo(User, { foreignKey: "UserId" });
 
-// Seguidores
+// Uma relação de seguir tem dois usuários, identificados pelos nomes de associação.
 Follow.belongsTo(User, { as: "seguidor", foreignKey: "seguidorId" });
 Follow.belongsTo(User, { as: "seguido", foreignKey: "seguidoId" });
 
-// Mensagens e atividades têm dois usuários (de e para)
+// Mensagens e notificações também referenciam usuários distintos de origem e destino.
 Message.belongsTo(User, { as: "de", foreignKey: "deId" });
 Message.belongsTo(User, { as: "para", foreignKey: "paraId" });
 Activity.belongsTo(User, { as: "de", foreignKey: "deId" });

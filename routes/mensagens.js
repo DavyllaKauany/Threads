@@ -2,6 +2,7 @@ const express = require("express");
 const { Op } = require("sequelize");
 const { User, Message } = require("../models");
 
+// Endpoints para listar conversas, abrir um histórico e enviar mensagens.
 const router = express.Router();
 
 // GET /api/mensagens/conversas  (última mensagem de cada conversa)
@@ -16,7 +17,8 @@ router.get("/conversas", async (req, res) => {
     order: [["createdAt", "DESC"], ["id", "DESC"]]
   });
 
-  const conversas = new Map(); // como está em ordem decrescente, a primeira de cada pessoa é a última mensagem
+  // Como a consulta vem da mais recente para a mais antiga, guarda a primeira por pessoa.
+  const conversas = new Map();
   for (const m of mensagens) {
     const outro = m.deId === meId ? m.para : m.de;
     if (!conversas.has(outro.id)) {
@@ -38,6 +40,7 @@ router.get("/:usuario", async (req, res) => {
   const outro = await User.findOne({ where: { usuario: req.params.usuario.toLowerCase() } });
   if (!outro) return res.status(404).json({ erro: "Usuário não encontrado." });
 
+  // Busca as mensagens nos dois sentidos e devolve na ordem em que foram enviadas.
   const mensagens = await Message.findAll({
     where: {
       [Op.or]: [

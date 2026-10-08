@@ -2,11 +2,13 @@ const express = require("express");
 const bcrypt = require("bcryptjs");
 const { User } = require("../models");
 
+// Endpoints públicos de cadastro, login, logout e consulta da sessão atual.
 const router = express.Router();
 
 // POST /api/auth/registrar
 router.post("/registrar", async (req, res) => {
   try {
+    // Normaliza o identificador antes de validar para evitar diferenças de maiúsculas.
     const usuario = String(req.body.usuario || "").trim().toLowerCase();
     const nome = String(req.body.nome || "").trim();
     const senha = String(req.body.senha || "");
@@ -21,6 +23,7 @@ router.post("/registrar", async (req, res) => {
       return res.status(409).json({ erro: "Esse usuário já existe." });
     }
 
+    // O fator 10 define o custo do hash; a senha original não é persistida.
     const novo = await User.create({ usuario, nome, senha: await bcrypt.hash(senha, 10) });
     req.session.userId = novo.id;
     res.json({ id: novo.id, usuario: novo.usuario, nome: novo.nome });
@@ -36,6 +39,7 @@ router.post("/login", async (req, res) => {
     const senha = String(req.body.senha || "");
 
     const user = await User.findOne({ where: { usuario } });
+    // Compara a senha enviada ao hash salvo sem revelar se o usuário existe.
     if (!user || !(await bcrypt.compare(senha, user.senha))) {
       return res.status(401).json({ erro: "Usuário ou senha incorretos." });
     }
@@ -55,6 +59,7 @@ router.post("/logout", (req, res) => {
 // GET /api/auth/eu  (quem está logado)
 router.get("/eu", async (req, res) => {
   if (!req.session.userId) return res.status(401).json({ erro: "Não autenticado." });
+  // Retorna somente dados de perfil, nunca o hash da senha.
   const user = await User.findByPk(req.session.userId, { attributes: ["id", "usuario", "nome", "bio"] });
   if (!user) return res.status(401).json({ erro: "Não autenticado." });
   res.json(user);

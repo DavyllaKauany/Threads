@@ -1,5 +1,6 @@
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
+/* Cores compartilhadas para manter o tema consistente nas diferentes telas. */
 :root {
   --fundo: #ffffff;
   --texto: #101010;
@@ -133,6 +134,7 @@ main h1 { font-size: 18px; padding: 18px 20px; border-bottom: 1px solid var(--li
 .comentarios input { flex: 1; border: 1px solid var(--linha); border-radius: 18px; padding: 8px 14px; font: inherit; font-size: 14px; outline: none; }
 
 /* ===== listas (pesquisa, atividade, mensagens) ===== */
+/* Itens de lista compartilham avatar, informação principal e texto secundário truncado. */
 .item { display: flex; align-items: center; gap: 12px; padding: 14px 20px; border-bottom: 1px solid var(--linha); cursor: pointer; }
 .item:hover { background: #fafafa; }
 .item .info { flex: 1; min-width: 0; }
